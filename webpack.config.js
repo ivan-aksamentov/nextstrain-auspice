@@ -2,6 +2,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const CompressionPlugin = require('compression-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 const fs = require('fs');
 const utils = require('./cli/utils');
 
@@ -62,6 +63,25 @@ const generateConfig = ({extensionPath, devMode=false, customOutputPath, analyze
     const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; // eslint-disable-line
     plugins.push(new BundleAnalyzerPlugin());
   }
+
+  plugins.push(new WorkboxPlugin.GenerateSW({
+    clientsClaim: true,
+    skipWaiting: true,
+    modifyURLPrefix: { '/dist': '' },
+    runtimeCaching: [
+      {
+        urlPattern: /api.mapbox.com/,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'mapbox',
+          expiration: {
+            maxAgeSeconds: 3 * 24 * 60 * 60, // 3 days
+            maxEntries: 1000
+          }
+        }
+      }
+    ]
+  }));
 
   const entry = [
     "babel-polyfill",
