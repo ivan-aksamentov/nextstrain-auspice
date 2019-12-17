@@ -10,6 +10,16 @@ const Splash = lazy(() => import("./components/splash"));
 const Status = lazy(() => import("./components/status"));
 const Notifications = lazy(() => import("./components/notifications/notifications"));
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/service-worker.js', { scope: '/' })
+      .then((registration) => registration)
+      .catch((error) =>
+        console.error('Service worker: registration failed:', error));
+  });
+}
+
 @connect((state) => ({displayComponent: state.general.displayComponent}))
 class MainComponentSwitch extends React.Component {
   render() {
