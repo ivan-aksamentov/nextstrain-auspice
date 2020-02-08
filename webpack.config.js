@@ -70,7 +70,7 @@ const generateConfig = ({extensionPath, devMode=false, customOutputPath, analyze
     modifyURLPrefix: { '/dist': '' },
     runtimeCaching: [
       {
-        urlPattern: /api.mapbox.com/,
+        urlPattern: /.*\.mapbox\.com.*/,
         handler: 'CacheFirst',
         options: {
           cacheName: 'mapbox',
@@ -81,6 +81,9 @@ const generateConfig = ({extensionPath, devMode=false, customOutputPath, analyze
         }
       }
     ]
+    // plugins: [
+    //   new CacheableResponsePlugin({ statuses: [0, 200] })
+    // ]
   }));
 
   const entry = [

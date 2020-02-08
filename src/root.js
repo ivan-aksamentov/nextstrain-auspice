@@ -1,6 +1,9 @@
 import React, { lazy, Suspense } from 'react';
 import { connect } from "react-redux";
 import { hot } from 'react-hot-loader/root';
+import {registerRoute} from 'workbox-routing';
+import {CacheFirst} from 'workbox-strategies';
+import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import Monitor from "./components/framework/monitor";
 import DatasetLoader from "./components/datasetLoader";
 import Spinner from "./components/framework/spinner";
@@ -18,6 +21,18 @@ if ('serviceWorker' in navigator) {
       .then((registration) => registration)
       .catch((error) =>
         console.error('Service worker: registration failed:', error));
+
+    registerRoute(
+      /.*\.mapbox\.com.*/,
+      new CacheFirst({
+        cacheName: 'mapbox',
+        plugins: [
+          new CacheableResponsePlugin({
+            statuses: [0, 200]
+          })
+        ]
+      })
+    );
   });
 }
 
